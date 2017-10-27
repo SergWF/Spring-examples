@@ -23,6 +23,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorsServiceTest {
@@ -103,6 +104,13 @@ public class AuthorsServiceTest {
     }
 
     @Test
+    public void shouldRaiseAuthorNotFoundOnUpdate() throws Exception {
+        doReturn(Optional.empty()).when(authorRepository).findById(AUTHOR_ID);
+        assertThatThrownBy(() -> authorsService.updateAuthor(AUTHOR_ID, AUTHOR_DTO, AuthorDto::updateAuthor, AuthorDto::valueOf)).isInstanceOf(
+                AuthorNotFoundException.class).hasMessage("Author not found by id " + AUTHOR_ID);
+    }
+
+    @Test
     public void shouldUpdateAuthor() throws Exception {
         //given
         Author updated = Author.builder().id(AUTHOR_ID).name(AUTHOR_NAME).link(AUTHOR_LINK).build();
@@ -120,4 +128,25 @@ public class AuthorsServiceTest {
                                                             .link(AUTHOR_LINK)
                                                             .build());
     }
+
+    @Test
+    public void shouldDeleteAuthor() throws Exception {
+        //given
+
+        doReturn(Optional.of(AUTHOR)).when(authorRepository).findById(AUTHOR_ID);
+
+        //when
+        authorsService.deleteAuthor(AUTHOR_ID);
+        // then
+
+        verify(authorRepository).delete(AUTHOR);
+    }
+
+    @Test
+    public void shouldRaiseAuthorNotFoundOnDelete() throws Exception {
+        doReturn(Optional.empty()).when(authorRepository).findById(AUTHOR_ID);
+        assertThatThrownBy(() -> authorsService.deleteAuthor(AUTHOR_ID)).isInstanceOf(
+                AuthorNotFoundException.class).hasMessage("Author not found by id " + AUTHOR_ID);
+    }
+
 }

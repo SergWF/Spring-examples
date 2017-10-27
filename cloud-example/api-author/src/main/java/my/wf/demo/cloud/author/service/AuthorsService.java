@@ -40,4 +40,10 @@ public class AuthorsService {
         Author updated = updater.apply(data, author);
         final Author saved = authorRepository.save(updated);
         return mapperOut.apply(saved);
-    }}
+    }
+
+    public void deleteAuthor(UUID id) {
+        final Author author = authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
+        authorRepository.delete(author);
+    }
+}

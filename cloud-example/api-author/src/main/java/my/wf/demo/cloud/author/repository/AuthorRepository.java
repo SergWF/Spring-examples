@@ -13,4 +13,5 @@ public interface AuthorRepository extends Repository<Author, UUID>{
     Optional<Author> findById(UUID id);
     Author save(Author author);
     Page<Author> findAll(Pageable pageable);
+    void delete(Author author);
 }

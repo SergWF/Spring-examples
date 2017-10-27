@@ -7,6 +7,7 @@ import my.wf.demo.cloud.author.service.AuthorsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -48,6 +49,11 @@ public class AuthorsController {
     @PutMapping(value = "/{id}")
     public AuthorDto updateAuthor(@PathVariable UUID id, @Valid @RequestBody AuthorDto authorDto){
         return  authorsService.updateAuthor(id, authorDto, AuthorDto::updateAuthor, AuthorDto::valueOf);
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public void deleteAuthor(@PathVariable UUID id){
+        authorsService.deleteAuthor(id);
     }
 
 }
