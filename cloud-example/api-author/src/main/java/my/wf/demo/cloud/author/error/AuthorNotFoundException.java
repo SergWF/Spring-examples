@@ -1,15 +1,17 @@
 package my.wf.demo.cloud.author.error;
 
 
-public class AuthorNotFoundException extends RuntimeException {
-    private final Long authorId;
+import java.util.UUID;
 
-    public AuthorNotFoundException(Long authorId) {
+public class AuthorNotFoundException extends RuntimeException {
+    private final UUID authorId;
+
+    public AuthorNotFoundException(UUID authorId) {
         this.authorId = authorId;
     }
 
     @Override
     public String getMessage() {
-        return String.format("Author not found by id %d", authorId);
+        return String.format("Author not found by id %s", authorId);
     }
 }

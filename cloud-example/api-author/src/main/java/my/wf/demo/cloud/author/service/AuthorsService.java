@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -18,7 +19,7 @@ public class AuthorsService {
 
     private final AuthorRepository authorRepository;
 
-    public <T> T getAuthor(Long id, Function<Author, T> mapper) {
+    public <T> T getAuthor(UUID id, Function<Author, T> mapper) {
         return authorRepository.findById(id)
                                .map(mapper)
                                .orElseThrow(() -> new AuthorNotFoundException(id));
@@ -31,10 +32,10 @@ public class AuthorsService {
     }
 
     public <T> Page<T> getPagedAuthors(Converter<Author, T> mapper, Pageable pageable) {
-        return authorRepository.getAll(pageable).map(mapper);
+        return authorRepository.findAll(pageable).map(mapper);
     }
 
-    public <T> T updateAuthor(Long id, T data, BiFunction<T, Author, Author> updater, Function<Author, T> mapperOut) {
+    public <T> T updateAuthor(UUID id, T data, BiFunction<T, Author, Author> updater, Function<Author, T> mapperOut) {
         final Author author = authorRepository.findById(id).orElseThrow(() -> new AuthorNotFoundException(id));
         Author updated = updater.apply(data, author);
         final Author saved = authorRepository.save(updated);

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -26,16 +27,22 @@ import static org.mockito.Mockito.doReturn;
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorsServiceTest {
 
-    private static final long AUTHOR_ID = 1L;
+    private static final UUID AUTHOR_ID = UUID.randomUUID();
     private static final String AUTHOR_NAME = "some name";
     private static final String AUTHOR_LINK = "http://some_link";
     private static final Pageable PAGE = new PageRequest(0, Integer.MAX_VALUE);
 
     @Mock
     private AuthorRepository authorRepository;
-    private static final Author AUTHOR = Author.builder().id(AUTHOR_ID).name(AUTHOR_NAME).link(AUTHOR_LINK).build();
-    private static final AuthorDto AUTHOR_DTO =
-            ImmutableAuthorDto.builder().name(AUTHOR_NAME).link(AUTHOR_LINK).build();
+    private static final Author AUTHOR = Author.builder()
+                                               .id(AUTHOR_ID)
+                                               .name(AUTHOR_NAME)
+                                               .link(AUTHOR_LINK)
+                                               .build();
+    private static final AuthorDto AUTHOR_DTO = ImmutableAuthorDto.builder()
+                                                                  .name(AUTHOR_NAME)
+                                                                  .link(AUTHOR_LINK)
+                                                                  .build();
 
     @InjectMocks
     private AuthorsService authorsService;
@@ -70,7 +77,7 @@ public class AuthorsServiceTest {
                 Author.builder().name(AUTHOR_NAME + "_3").link(AUTHOR_LINK + "_3").build()
         );
         Page<Author> page = new PageImpl<>(authors);
-        doReturn(page).when(authorRepository).getAll(PAGE);
+        doReturn(page).when(authorRepository).findAll(PAGE);
 
         //when //then
         assertThat(authorsService.getPagedAuthors(AuthorDto::valueOf, PAGE).getContent())
@@ -87,7 +94,7 @@ public class AuthorsServiceTest {
         Author notsaved = Author.builder().name(AUTHOR_NAME).link(AUTHOR_LINK).build();
         doReturn(AUTHOR).when(authorRepository).save(notsaved);
         //when
-        AuthorDto responseDto = authorsService.createAuthor(AUTHOR_DTO, AuthorDto::buildAuthor, AuthorDto::valueOf);
+        AuthorDto responseDto = authorsService.createAuthor(AUTHOR_DTO, AuthorDto::createAuthor, AuthorDto::valueOf);
         // then
         assertThat(responseDto).isEqualTo(ImmutableAuthorDto.builder()
                                                             .name(AUTHOR_NAME)
